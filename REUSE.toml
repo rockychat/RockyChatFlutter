@@ -1,0 +1,10 @@
+version = 1
+SPDX-PackageName = "RockyChat"
+SPDX-PackageSupplier = "CyanTea <ushio_noa@disroot.org>"
+SPDX-PackageDownloadLocation = "https://codeberg.org/ybr/RockyChatFlutter"
+
+[[annotations]]
+path = "lib/**"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 ybr"
+SPDX-License-Identifier = "MPL-2.0"

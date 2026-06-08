@@ -1,0 +1,42 @@
+name: rockychat
+description: "花枫咖啡馆"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.5
+  http: ^1.4.0
+  web_socket_channel: ^3.0.3
+  shared_preferences: ^2.5.3
+  url_launcher: ^6.3.1
+  cached_network_image: ^3.4.1
+  intl: ^0.20.2
+  image_picker: ^1.1.2
+  http_parser: ^4.1.2
+  app_links: ^6.4.0
+  flutter_markdown: ^0.7.6
+  flutter_html: ^3.0.0-beta.2
+  file_picker: ^8.1.4
+  emoji_picker_flutter: ^4.4.0
+  universal_io: ^2.3.1
+  flutter_secure_storage: ^10.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: HarmonyOSSans
+      fonts:
+        - asset: assets/fonts/HarmonyOS_Sans_SC_Regular.ttf
+          weight: 400
