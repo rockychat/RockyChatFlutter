@@ -14,8 +14,6 @@ import 'providers/blog_provider.dart';
 import 'pages/login_page.dart';
 import 'pages/main_shell.dart';
 
-final appRouteObserver = AppRouteObserver();
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final apiClient = ApiClient();
@@ -60,32 +58,30 @@ class _RockyChatAppState extends State<RockyChatApp> {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
-        if (auth.loading) {
-          return MaterialApp(
-            title: 'Rocky Chat',
-            debugShowCheckedModeBanner: false,
-            theme: buildAdwaitaDarkTheme(),
-            navigatorObservers: [appRouteObserver],
-            home: const Scaffold(
-              backgroundColor: AdwColors.window,
-              body: Center(
-                child: CircularProgressIndicator(color: AdwColors.accent),
-              ),
-            ),
-          );
-        }
-        if (!auth.isAuthenticated) {
-          return MaterialApp(
-            title: 'Rocky Chat',
-            debugShowCheckedModeBanner: false,
-            theme: buildAdwaitaDarkTheme(),
-            navigatorObservers: [appRouteObserver],
-            home: const LoginPage(),
-          );
-        }
-        return _ServicesShell(key: ValueKey(auth.user?.id));
+        return MaterialApp(
+          title: 'Rocky Chat',
+          debugShowCheckedModeBanner: false,
+          theme: buildAdwaitaDarkTheme(),
+          navigatorObservers: [appRouteObserver],
+          home: _buildHome(auth),
+        );
       },
     );
+  }
+
+  Widget _buildHome(AuthProvider auth) {
+    if (auth.loading) {
+      return const Scaffold(
+        backgroundColor: AdwColors.window,
+        body: Center(
+          child: CircularProgressIndicator(color: AdwColors.accent),
+        ),
+      );
+    }
+    if (!auth.isAuthenticated) {
+      return const LoginPage();
+    }
+    return _ServicesShell(key: ValueKey(auth.user?.id));
   }
 }
 
@@ -145,13 +141,7 @@ class _ServicesShellState extends State<_ServicesShell> {
         ChangeNotifierProvider.value(value: _community),
         ChangeNotifierProvider.value(value: _blog),
       ],
-      child: MaterialApp(
-        title: 'Rocky Chat',
-        debugShowCheckedModeBanner: false,
-        theme: buildAdwaitaDarkTheme(),
-        navigatorObservers: [appRouteObserver],
-        home: const MainShell(),
-      ),
+      child: const MainShell(),
     );
   }
 }

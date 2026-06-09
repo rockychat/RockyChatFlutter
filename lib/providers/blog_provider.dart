@@ -162,6 +162,12 @@ class BlogProvider extends ChangeNotifier {
     return _api.request('/api/blog/categories', method: 'POST', data: data);
   }
 
+  void resetSelection() {
+    _currentBlog = null;
+    _comments = [];
+    notifyListeners();
+  }
+
   void setCurrentBlog(Blog? blog) {
     _currentBlog = blog;
     notifyListeners();

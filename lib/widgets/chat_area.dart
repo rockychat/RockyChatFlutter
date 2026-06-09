@@ -1140,24 +1140,52 @@ class _ChatAreaState extends State<ChatArea> {
                                 color: AdwColors.border
                                     .withValues(alpha: 0.2)),
                           ),
-                          child: TextField(
-                            controller: _inputController,
-                            focusNode: _inputFocusNode,
-                            style: const TextStyle(
-                                color: AdwColors.fg, fontSize: 13),
-                            decoration: InputDecoration(
-                              hintText: _getPlaceholderText(chat),
-                              hintStyle: const TextStyle(
-                                  color: AdwColors.fgDim, fontSize: 13),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                              isDense: true,
+                          child: Focus(
+                            onKeyEvent: (node, event) {
+                              if (event is KeyDownEvent &&
+                                  event.logicalKey ==
+                                      LogicalKeyboardKey.enter) {
+                                if (HardwareKeyboard
+                                    .instance.isControlPressed) {
+                                  // Ctrl+Enter → 换行
+                                  final text = _inputController.text;
+                                  final sel = _inputController.selection;
+                                  final start = sel.start;
+                                  final end = sel.end;
+                                  _inputController.text =
+                                      '${text.substring(0, start)}\n${text.substring(end)}';
+                                  _inputController.selection =
+                                      TextSelection.collapsed(
+                                          offset: start + 1);
+                                  return KeyEventResult.handled;
+                                } else {
+                                  // Enter → 发送
+                                  _sendMessage(chat);
+                                  return KeyEventResult.handled;
+                                }
+                              }
+                              return KeyEventResult.ignored;
+                            },
+                            child: TextField(
+                              controller: _inputController,
+                              focusNode: _inputFocusNode,
+                              style: const TextStyle(
+                                  color: AdwColors.fg, fontSize: 13),
+                              decoration: InputDecoration(
+                                hintText: _getPlaceholderText(chat),
+                                hintStyle: const TextStyle(
+                                    color: AdwColors.fgDim, fontSize: 13),
+                                border: InputBorder.none,
+                                contentPadding:
+                                    const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                isDense: true,
+                              ),
+                              maxLines: null,
+                              onChanged: (val) =>
+                                  _handleInputChange(val, chat),
+                              onSubmitted: (_) => _sendMessage(chat),
                             ),
-                            maxLines: null,
-                            onChanged: (val) => _handleInputChange(val, chat),
-                            onSubmitted: (_) => _sendMessage(chat),
                           ),
                         ),
                       ),

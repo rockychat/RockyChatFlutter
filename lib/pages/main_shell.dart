@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme.dart';
 import '../providers/auth_provider.dart';
+import '../providers/chat_provider.dart';
+import '../providers/community_provider.dart';
+import '../providers/blog_provider.dart';
 import '../services/route_observer.dart';
 import '../utils/about_dialog.dart';
+import '../widgets/activities_button.dart';
 import 'chat_page.dart';
 import 'moments_page.dart';
 import 'community_page.dart';
@@ -21,7 +25,8 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _selectedIndex = 0;
-  
+  int _pageRefreshCounter = 0;
+
   // 是否显示底栏/侧边栏（当路由栈深度为1时显示）
   bool _showBottomBar = true;
 
@@ -106,7 +111,32 @@ class _MainShellState extends State<MainShell> {
               color: AdwColors.sidebar,
               child: Column(
                 children: [
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
+                  // 点线按钮：滚轮切换页面，点击刷新当前页面
+                  ActivitiesButton(
+                    selectedIndex: _selectedIndex,
+                    itemCount: _navItems.length,
+                    onIndexChanged: (i) {
+                      setState(() => _selectedIndex = i);
+                    },
+                    onRefresh: () {
+                      // 根据当前页面调用对应 Provider 的重置方法
+                      switch (_selectedIndex) {
+                        case 0:
+                          context.read<ChatProvider>().resetSelection();
+                          break;
+                        case 3:
+                          context.read<CommunityProvider>().resetSelection();
+                          break;
+                        case 4:
+                          context.read<BlogProvider>().resetSelection();
+                          break;
+                      }
+                      // 强制重建页面 widget
+                      setState(() => _pageRefreshCounter++);
+                    },
+                  ),
+                  const SizedBox(height: 2),
                   ...List.generate(_navItems.length, (i) {
                     final item = _navItems[i];
                     final isSelected = _selectedIndex == i;
@@ -211,9 +241,12 @@ class _MainShellState extends State<MainShell> {
                 ],
               ),
             ),
-          // 内容区域
+          // 内容区域（key 变化时强制重建页面）
           Expanded(
-            child: _buildPage(_selectedIndex),
+            child: KeyedSubtree(
+              key: ValueKey('page_${_selectedIndex}_$_pageRefreshCounter'),
+              child: _buildPage(_selectedIndex),
+            ),
           ),
         ],
       ),

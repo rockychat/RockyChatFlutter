@@ -181,6 +181,13 @@ class CommunityProvider extends ChangeNotifier {
         method: 'POST', data: {'postId': postId, 'content': content});
   }
 
+  void resetSelection() {
+    _currentCommunity = null;
+    _currentPost = null;
+    _communityPosts = [];
+    notifyListeners();
+  }
+
   void setCurrentCommunity(Community? c) {
     _currentCommunity = c;
     notifyListeners();
